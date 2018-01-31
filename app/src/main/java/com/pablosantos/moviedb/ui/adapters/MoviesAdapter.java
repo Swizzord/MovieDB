@@ -12,28 +12,27 @@ import com.pablosantos.moviedb.data.local.MovieModel;
 import java.util.List;
 
 /**
- * Created by Teo on 31/01/2018.
+ * Created by Pablo Santos on 31/01/2018.
  */
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHolder> {
 
-    private List<MovieModel> moviesList;
+    private List<MovieModel> movieList;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, date, overview, rating;
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        private TextView title, date, overview, rating;
 
-        public MyViewHolder(View view) {
+        private MyViewHolder(View view) {
             super(view);
-            title = (TextView) view.findViewById(R.id.lblTitle);
-            date = (TextView) view.findViewById(R.id.lblDate);
-            overview = (TextView) view.findViewById(R.id.lblOverview);
-            rating = (TextView) view.findViewById(R.id.lblRating);
+            title = view.findViewById(R.id.lblTitle);
+            date = view.findViewById(R.id.lblDate);
+            overview = view.findViewById(R.id.lblOverview);
+            rating = view.findViewById(R.id.lblRating);
         }
     }
 
-
-    public MoviesAdapter(List<MovieModel> moviesList) {
-        this.moviesList = moviesList;
+    public MoviesAdapter(List<MovieModel> movieList) {
+        this.movieList = movieList;
     }
 
     @Override
@@ -46,15 +45,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
 
     @Override
     public void onBindViewHolder(MyViewHolder holder, int position) {
-        MovieModel movie = moviesList.get(position);
-        holder.title.setText(movie.originalTitle);
-        holder.date.setText(movie.releaseDate);
-        holder.overview.setText(movie.overview);
-        holder.rating.setText(movie.voteAverage.toString()+"⋆");
+        MovieModel movie = movieList.get(position);
+        holder.title.setText(movie.getOriginalTitle());
+        holder.date.setText(movie.getReleaseDate());
+        holder.overview.setText(movie.getOverview());
+        holder.rating.setText(movie.getVoteAverage().toString() + "⋆");
     }
 
     @Override
     public int getItemCount() {
-        return moviesList.size();
+        return movieList.size();
     }
 }

@@ -1,29 +1,29 @@
 package com.pablosantos.moviedb.data;
 
 import com.pablosantos.moviedb.data.local.MovieModel;
-import com.pablosantos.moviedb.data.remote.Movie;
+import com.pablosantos.moviedb.data.remote.MovieResponse;
 
 /**
- * Created by Teo on 31/01/2018.
+ * Created by Pablo Santos on 31/01/2018.
  */
 
 public class MovieMapper {
-    public static MovieModel apiToModel(Movie input){
+    public static MovieModel responseToModel(MovieResponse input){
         MovieModel output = new MovieModel();
-        output.id = input.id;
-        output.voteCount = input.voteCount;
-        output.video = input.video;
-        output.voteAverage = input.voteAverage;
-        output.title = input.title;
-        output.popularity = input.popularity;
-        output.posterPath = input.posterPath;
-        output.originalLanguage = input.originalLanguage;
-        output.originalTitle = input.originalTitle;
+        output.setId(input.getId());
+        output.setVoteCount(input.getVoteCount());
+        output.setVideo(input.getVideo());
+        output.setVoteAverage(input.getVoteAverage());
+        output.setTitle(input.getTitle());
+        output.setPopularity(input.getPopularity());
+        output.setPosterPath(input.getPosterPath());
+        output.setOriginalLanguage(input.getOriginalLanguage());
+        output.setOriginalTitle(input.getOriginalTitle());
 //        output.genreIds = input.genreIds;
-        output.backdropPath = input.backdropPath;
-        output.adult = input.adult;
-        output.overview = input.overview;
-        output.releaseDate = input.releaseDate;
+        output.setBackdropPath(input.getBackdropPath());
+        output.setAdult(input.getAdult());
+        output.setOverview(input.getOverview());
+        output.setReleaseDate(input.getReleaseDate());
         return  output;
     }
 }

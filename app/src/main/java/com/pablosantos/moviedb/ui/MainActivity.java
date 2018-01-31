@@ -3,6 +3,9 @@ package com.pablosantos.moviedb.ui;
 import android.arch.persistence.room.Room;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import com.pablosantos.moviedb.R;
@@ -14,6 +17,7 @@ import com.pablosantos.moviedb.data.remote.Api;
 import com.pablosantos.moviedb.data.remote.ApiService;
 import com.pablosantos.moviedb.data.remote.Movie;
 import com.pablosantos.moviedb.data.remote.Result;
+import com.pablosantos.moviedb.ui.adapters.MoviesAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,11 +31,16 @@ import io.reactivex.schedulers.Schedulers;
 public class MainActivity extends AppCompatActivity {
 
     private MovieDao movieDao;
+    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Set up UI.
+        setUpUI();
+
         Api a = new ApiService().getApi();
         a.getPopularMovies()
                 .subscribeOn(Schedulers.io()) // Esta línea hace que sea asíncrono.
@@ -57,9 +66,21 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Consumer<List<MovieModel>>() {
                     @Override
                     public void accept(@NonNull List<MovieModel> movieList) throws Exception {
-                        Log.i("-------------------", movieList.toString()) ;
+                        swapAdapter(movieList);
                     }
                 });
+    }
+
+    void swapAdapter(List<MovieModel> movieList){
+        MoviesAdapter adapter = new MoviesAdapter(movieList);
+        recyclerView.swapAdapter(adapter, false);
+    }
+
+    private void setUpUI() {
+        recyclerView = findViewById(R.id.recyclerView);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
     private MovieDao setUpDB() {

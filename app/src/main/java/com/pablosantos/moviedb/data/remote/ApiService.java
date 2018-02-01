@@ -5,12 +5,12 @@ import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Created by Pablo Santos on 31/01/2018.
+ * Created by Teo on 31/01/2018.
  */
 
 public class ApiService {
 
-    private static final String BASE_URL = "https://api.themoviedb.org/3/movie/";
+    private final String BASE_URL = "https://api.themoviedb.org/3/movie/";
 
     private Api api;
 

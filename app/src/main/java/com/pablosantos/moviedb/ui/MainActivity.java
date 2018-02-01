@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.pablosantos.moviedb.R;
 import com.pablosantos.moviedb.data.local.MovieDao;
@@ -14,8 +15,8 @@ import com.pablosantos.moviedb.data.MovieMapper;
 import com.pablosantos.moviedb.data.local.MovieModel;
 import com.pablosantos.moviedb.data.remote.Api;
 import com.pablosantos.moviedb.data.remote.ApiService;
-import com.pablosantos.moviedb.data.remote.MovieResponse;
-import com.pablosantos.moviedb.data.remote.Response;
+import com.pablosantos.moviedb.data.remote.Movie;
+import com.pablosantos.moviedb.data.remote.Result;
 import com.pablosantos.moviedb.ui.adapters.MoviesAdapter;
 
 import java.util.ArrayList;
@@ -31,32 +32,33 @@ public class MainActivity extends AppCompatActivity {
 
     private MovieDao movieDao;
     private RecyclerView recyclerView;
+    private List<MovieModel> movieList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Set up.
+        // Set up UI.
         setUpUI();
-        setUpDB();
 
-        Api api = new ApiService().getApi();
-        api.getPopularMovies()
+        Api a = new ApiService().getApi();
+        a.getPopularMovies()
                 .subscribeOn(Schedulers.io()) // Esta línea hace que sea asíncrono.
-                .map(new Function<Response, List<MovieResponse>>() {
+                .map(new Function<Result, List<Movie>>() {
                     @Override
-                    public List<MovieResponse> apply(@NonNull Response response) throws Exception {
-                        return response.getMovies();
+                    public List<Movie> apply(@NonNull Result result) throws Exception {
+                        return result.results;
                     }
                 })
-                .map(new Function<List<MovieResponse>, List<MovieModel>>() {
+                .map(new Function<List<Movie>, List<MovieModel>>() {
                     @Override
-                    public List<MovieModel> apply(@NonNull List<MovieResponse> movies) throws Exception {
+                    public List<MovieModel> apply(@NonNull List<Movie> movies) throws Exception {
                         List<MovieModel> movieList = new ArrayList<>();
-                        for (MovieResponse movieResponse : movies)
-                            movieList.add(MovieMapper.responseToModel(movieResponse));
+                        for (Movie movie : movies)
+                            movieList.add(MovieMapper.apiToModel(movie));
 
+                        movieDao = setUpDB();
                         movieDao.insert(movieList);
                         return movieDao.getMovies();
                     }
@@ -70,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 });
     }
 
-    private void swapAdapter(List<MovieModel> movieList){
+    void swapAdapter(List<MovieModel> movieList){
         MoviesAdapter adapter = new MoviesAdapter(movieList);
         recyclerView.swapAdapter(adapter, false);
     }
@@ -80,13 +82,14 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+//        recyclerView.setAdapter(new MoviesAdapter(movieList));
     }
 
-    private void setUpDB() {
+    private MovieDao setUpDB() {
         MovieDataBase db = Room.databaseBuilder(getApplicationContext(),
                 MovieDataBase.class, "movieDB")
                 .fallbackToDestructiveMigration()
                 .build();
-        movieDao = db.getMovieDao();
+        return db.getMovieDao();
     }
 }

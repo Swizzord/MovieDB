@@ -1,8 +1,7 @@
-package com.pablosantos.moviedb.data.local;
+package com.pablosantos.moviedb.data.remote;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
-import android.support.annotation.NonNull;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
@@ -10,30 +9,56 @@ import java.util.List;
  * Created by Pablo Santos on 31/01/2018.
  */
 
-@Entity (tableName = "MOVIES")
-public class MovieModel {
-    @PrimaryKey @NonNull
-    public Integer id;
+public class Movie {
+
+    @SerializedName("vote_count")
+    @Expose
     public Integer voteCount;
+    @SerializedName("id")
+    @Expose
+    public Integer id;
+    @SerializedName("video")
+    @Expose
     public Boolean video;
+    @SerializedName("vote_average")
+    @Expose
     public Double voteAverage;
+    @SerializedName("title")
+    @Expose
     public String title;
+    @SerializedName("popularity")
+    @Expose
     public Double popularity;
+    @SerializedName("poster_path")
+    @Expose
     public String posterPath;
+    @SerializedName("original_language")
+    @Expose
     public String originalLanguage;
+    @SerializedName("original_title")
+    @Expose
     public String originalTitle;
-//    public List<Integer> genreIds = null;
+    @SerializedName("genre_ids")
+    @Expose
+    public List<Integer> genreIds = null;
+    @SerializedName("backdrop_path")
+    @Expose
     public String backdropPath;
+    @SerializedName("adult")
+    @Expose
     public Boolean adult;
+    @SerializedName("overview")
+    @Expose
     public String overview;
+    @SerializedName("release_date")
+    @Expose
     public String releaseDate;
-    public Boolean favourite;
 
     @Override
     public String toString() {
-        return "MovieModel{" +
-                "id=" + id +
-                ", voteCount=" + voteCount +
+        return "Movie{" +
+                "voteCount=" + voteCount +
+                ", id=" + id +
                 ", video=" + video +
                 ", voteAverage=" + voteAverage +
                 ", title='" + title + '\'' +
@@ -41,12 +66,11 @@ public class MovieModel {
                 ", posterPath='" + posterPath + '\'' +
                 ", originalLanguage='" + originalLanguage + '\'' +
                 ", originalTitle='" + originalTitle + '\'' +
-//                ", genreIds=" + genreIds +
+                ", genreIds=" + genreIds +
                 ", backdropPath='" + backdropPath + '\'' +
                 ", adult=" + adult +
                 ", overview='" + overview + '\'' +
                 ", releaseDate='" + releaseDate + '\'' +
-                ", favourite=" + favourite +
                 '}';
     }
 }

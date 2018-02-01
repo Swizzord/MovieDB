@@ -9,7 +9,7 @@ import android.arch.persistence.room.Query;
 import java.util.List;
 
 /**
- * Created by Pablo Santos on 31/01/2018.
+ * Created by Teo on 31/01/2018.
  */
 
 @Dao
@@ -31,4 +31,5 @@ public interface MovieDao {
 
     @Query("SELECT * FROM MOVIES WHERE favourite = 'true'")
     List<MovieModel> getFavouriteMovies();
+
 }

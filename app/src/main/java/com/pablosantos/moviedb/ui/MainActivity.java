@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
         Api a = new ApiService().getApi();
         a.getPopularMovies()
-                .subscribeOn(Schedulers.io()) // Esta línea hace que sea asíncrono.
+                .subscribeOn(Schedulers.io())
                 .map(new Function<Result, List<MovieResponse>>() {
                     @Override
                     public List<MovieResponse> apply(@NonNull Result result) throws Exception {
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     void swapAdapter(List<MovieModel> movieList){
-        MoviesAdapter adapter = new MoviesAdapter(movieList);
+        MoviesAdapter adapter = new MoviesAdapter(movieList, this);
         recyclerView.swapAdapter(adapter, false);
     }
 
@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-//        recyclerView.setAdapter(new MoviesAdapter(movieList));
     }
 
     private MovieDao setUpDB() {

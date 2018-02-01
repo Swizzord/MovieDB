@@ -1,11 +1,13 @@
 package com.pablosantos.moviedb.ui.adapters;
 
+import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.pablosantos.moviedb.R;
 import com.pablosantos.moviedb.data.local.MovieModel;
 import com.pkmmte.view.CircularImageView;
@@ -19,6 +21,7 @@ import java.util.List;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHolder> {
 
     private List<MovieModel> moviesList;
+    private Context context;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView title, overview;
@@ -33,8 +36,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
     }
 
 
-    public MoviesAdapter(List<MovieModel> moviesList) {
+    public MoviesAdapter(List<MovieModel> moviesList, Context context) {
         this.moviesList = moviesList;
+        this.context = context;
     }
 
     @Override
@@ -51,6 +55,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
         holder.title.setText(movie.originalTitle);
         holder.overview.setText(movie.overview);
 //        holder.poster.setImageDrawable(???);
+
+        // Image.
+//        String url = "https://image.tmdb.org/t/p/w92" + movie.posterPath;
+//        Glide.with(context)
+//                .load(url)
+//                .into(holder.poster);
     }
 
     @Override

@@ -49,4 +49,7 @@ dependencies {
     // RxJava2
     compile group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.1.1'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+
+    // CircularImageView
+    compile 'com.pkmmte.view:circularimageview:1.1'
 }

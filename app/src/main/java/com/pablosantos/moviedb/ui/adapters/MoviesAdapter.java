@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.pablosantos.moviedb.R;
 import com.pablosantos.moviedb.data.local.MovieModel;
+import com.pkmmte.view.CircularImageView;
 
 import java.util.List;
 
@@ -19,15 +20,15 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
 
     private List<MovieModel> moviesList;
 
-    public class MyViewHolder extends RecyclerView.ViewHolder {
-        public TextView title, date, overview, rating;
+    class MyViewHolder extends RecyclerView.ViewHolder {
+        private TextView title, overview;
+        private CircularImageView poster;
 
-        public MyViewHolder(View view) {
+        private MyViewHolder(View view) {
             super(view);
-            title = (TextView) view.findViewById(R.id.lblTitle);
-            date = (TextView) view.findViewById(R.id.lblDate);
-            overview = (TextView) view.findViewById(R.id.lblOverview);
-            rating = (TextView) view.findViewById(R.id.lblRating);
+            title = view.findViewById(R.id.tvTitle);
+            overview = view.findViewById(R.id.tvOverview);
+            poster = view.findViewById(R.id.ivPoster);
         }
     }
 
@@ -48,9 +49,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
     public void onBindViewHolder(MyViewHolder holder, int position) {
         MovieModel movie = moviesList.get(position);
         holder.title.setText(movie.originalTitle);
-        holder.date.setText(movie.releaseDate);
         holder.overview.setText(movie.overview);
-        holder.rating.setText(movie.voteAverage.toString()+"⋆");
+//        holder.poster.setImageDrawable(???);
     }
 
     @Override

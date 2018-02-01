@@ -7,7 +7,7 @@ import java.util.List;
  */
 
 public class Result {
-    public List<Movie> results;
+    public List<MovieResponse> results;
 
     @Override
     public String toString() {

@@ -9,7 +9,7 @@ import java.util.List;
  * Created by Pablo Santos on 31/01/2018.
  */
 
-public class Movie {
+public class MovieResponse {
 
     @SerializedName("vote_count")
     @Expose
@@ -56,7 +56,7 @@ public class Movie {
 
     @Override
     public String toString() {
-        return "Movie{" +
+        return "MovieResponse{" +
                 "voteCount=" + voteCount +
                 ", id=" + id +
                 ", video=" + video +

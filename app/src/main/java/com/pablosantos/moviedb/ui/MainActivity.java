@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 
 import com.pablosantos.moviedb.R;
 import com.pablosantos.moviedb.data.local.MovieDao;
@@ -15,7 +14,7 @@ import com.pablosantos.moviedb.data.MovieMapper;
 import com.pablosantos.moviedb.data.local.MovieModel;
 import com.pablosantos.moviedb.data.remote.Api;
 import com.pablosantos.moviedb.data.remote.ApiService;
-import com.pablosantos.moviedb.data.remote.Movie;
+import com.pablosantos.moviedb.data.remote.MovieResponse;
 import com.pablosantos.moviedb.data.remote.Result;
 import com.pablosantos.moviedb.ui.adapters.MoviesAdapter;
 
@@ -45,18 +44,18 @@ public class MainActivity extends AppCompatActivity {
         Api a = new ApiService().getApi();
         a.getPopularMovies()
                 .subscribeOn(Schedulers.io()) // Esta línea hace que sea asíncrono.
-                .map(new Function<Result, List<Movie>>() {
+                .map(new Function<Result, List<MovieResponse>>() {
                     @Override
-                    public List<Movie> apply(@NonNull Result result) throws Exception {
+                    public List<MovieResponse> apply(@NonNull Result result) throws Exception {
                         return result.results;
                     }
                 })
-                .map(new Function<List<Movie>, List<MovieModel>>() {
+                .map(new Function<List<MovieResponse>, List<MovieModel>>() {
                     @Override
-                    public List<MovieModel> apply(@NonNull List<Movie> movies) throws Exception {
+                    public List<MovieModel> apply(@NonNull List<MovieResponse> movies) throws Exception {
                         List<MovieModel> movieList = new ArrayList<>();
-                        for (Movie movie : movies)
-                            movieList.add(MovieMapper.apiToModel(movie));
+                        for (MovieResponse movieResponse : movies)
+                            movieList.add(MovieMapper.apiToModel(movieResponse));
 
                         movieDao = setUpDB();
                         movieDao.insert(movieList);

@@ -4,7 +4,7 @@ import com.pablosantos.moviedb.data.local.MovieModel;
 import com.pablosantos.moviedb.data.remote.MovieResponse;
 
 /**
- * Created by Teo on 31/01/2018.
+ * Created by Pablo Santos on 31/01/2018.
  */
 
 public class MovieMapper {

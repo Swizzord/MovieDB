@@ -16,7 +16,7 @@ import com.pablosantos.moviedb.data.local.MovieModel;
 import java.util.List;
 
 /**
- * Created by Teo on 31/01/2018.
+ * Created by Pablo Santos on 31/01/2018.
  */
 
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHolder> {

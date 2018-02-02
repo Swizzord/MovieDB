@@ -4,7 +4,7 @@ import io.reactivex.Single;
 import retrofit2.http.GET;
 
 /**
- * Created by Teo on 31/01/2018.
+ * Created by Pablo Santos on 31/01/2018.
  */
 
 public interface Api {

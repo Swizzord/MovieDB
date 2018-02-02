@@ -12,15 +12,10 @@ public class MovieResponse {
 
     @SerializedName("vote_count")
     public Integer voteCount;
-    @SerializedName("id")
     public Integer id;
-    @SerializedName("video")
-    public Boolean video;
     @SerializedName("vote_average")
     public Double voteAverage;
-    @SerializedName("title")
     public String title;
-    @SerializedName("popularity")
     public Double popularity;
     @SerializedName("poster_path")
     public String posterPath;
@@ -28,34 +23,34 @@ public class MovieResponse {
     public String originalLanguage;
     @SerializedName("original_title")
     public String originalTitle;
-    @SerializedName("genre_ids")
-    public List<Integer> genreIds = null;
-    @SerializedName("backdrop_path")
-    public String backdropPath;
-    @SerializedName("adult")
-    public Boolean adult;
-    @SerializedName("overview")
+    public List<Genre> genres;
+    @SerializedName("production_companies")
+    public List<ProductionCompany> productionCompanies;
     public String overview;
     @SerializedName("release_date")
     public String releaseDate;
+    public String status;
+    public int bugdet;
+    public String homepage;
 
     @Override
     public String toString() {
         return "MovieResponse{" +
                 "voteCount=" + voteCount +
                 ", id=" + id +
-                ", video=" + video +
                 ", voteAverage=" + voteAverage +
                 ", title='" + title + '\'' +
                 ", popularity=" + popularity +
                 ", posterPath='" + posterPath + '\'' +
                 ", originalLanguage='" + originalLanguage + '\'' +
                 ", originalTitle='" + originalTitle + '\'' +
-                ", genreIds=" + genreIds +
-                ", backdropPath='" + backdropPath + '\'' +
-                ", adult=" + adult +
+                ", genres=" + genres +
+                ", productionCompanies=" + productionCompanies +
                 ", overview='" + overview + '\'' +
                 ", releaseDate='" + releaseDate + '\'' +
+                ", status='" + status + '\'' +
+                ", bugdet=" + bugdet +
+                ", homepage='" + homepage + '\'' +
                 '}';
     }
 }

@@ -8,22 +8,18 @@ import com.pablosantos.moviedb.data.remote.MovieResponse;
  */
 
 public class MovieMapper {
-    public static MovieModel apiToModel(MovieResponse input){
+    public static MovieModel apiToModel(MovieResponse input) {
         MovieModel output = new MovieModel();
         output.id = input.id;
-        output.voteCount = input.voteCount;
-        output.video = input.video;
         output.voteAverage = input.voteAverage;
         output.title = input.title;
         output.popularity = input.popularity;
         output.posterPath = input.posterPath;
-        output.originalLanguage = input.originalLanguage;
         output.originalTitle = input.originalTitle;
-//        output.genreIds = input.genreIds;
-        output.backdropPath = input.backdropPath;
-        output.adult = input.adult;
+        output.genres = input.genres;
+        output.productionCompanies = input.productionCompanies;
         output.overview = input.overview;
         output.releaseDate = input.releaseDate;
-        return  output;
+        return output;
     }
 }

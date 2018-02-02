@@ -6,7 +6,7 @@ import java.util.List;
  * Created by Pablo Santos on 31/01/2018.
  */
 
-public class Result {
+public class Response {
     public List<MovieResponse> results;
 
     @Override

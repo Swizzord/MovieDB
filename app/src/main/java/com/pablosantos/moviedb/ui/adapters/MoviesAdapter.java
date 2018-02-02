@@ -1,6 +1,5 @@
 package com.pablosantos.moviedb.ui.adapters;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.pablosantos.moviedb.R;
 import com.pablosantos.moviedb.data.local.MovieModel;
+import com.pablosantos.moviedb.ui.OnItemClickListener;
 
 import java.util.List;
 
@@ -22,7 +22,7 @@ import java.util.List;
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHolder> {
 
     private List<MovieModel> moviesList;
-    private Context context;
+    private OnItemClickListener listener;
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView title, overview;
@@ -36,10 +36,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
         }
     }
 
-
-    public MoviesAdapter(List<MovieModel> moviesList, Context context) {
+    public MoviesAdapter(List<MovieModel> moviesList, OnItemClickListener listener) {
         this.moviesList = moviesList;
-        this.context = context;
+        this.listener = listener;
     }
 
     @Override
@@ -51,18 +50,24 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
-        MovieModel movie = moviesList.get(position);
+    public void onBindViewHolder(MyViewHolder holder, final int position) {
+        final MovieModel movie = moviesList.get(position);
         holder.title.setText(movie.originalTitle);
         holder.overview.setText(movie.overview);
-//        holder.poster.setImageDrawable(???);
 
         // Image.
         String url = "https://image.tmdb.org/t/p/w500" + movie.posterPath;
-        Glide.with(context)
+        Glide.with(holder.poster.getContext())
                 .load(url)
                 .apply(RequestOptions.circleCropTransform())
                 .into(holder.poster);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onItemClick(movie, position);
+            }
+        });
     }
 
     @Override

@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.widget.Toast;
 
 import com.pablosantos.moviedb.R;
 import com.pablosantos.moviedb.data.local.MovieDao;
@@ -15,7 +17,7 @@ import com.pablosantos.moviedb.data.local.MovieModel;
 import com.pablosantos.moviedb.data.remote.Api;
 import com.pablosantos.moviedb.data.remote.ApiService;
 import com.pablosantos.moviedb.data.remote.MovieResponse;
-import com.pablosantos.moviedb.data.remote.Result;
+import com.pablosantos.moviedb.data.remote.Response;
 import com.pablosantos.moviedb.ui.adapters.MoviesAdapter;
 
 import java.util.ArrayList;
@@ -27,7 +29,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnItemClickListener{
 
     private MovieDao movieDao;
     private RecyclerView recyclerView;
@@ -43,9 +45,9 @@ public class MainActivity extends AppCompatActivity {
         Api a = new ApiService().getApi();
         a.getPopularMovies()
                 .subscribeOn(Schedulers.io())
-                .map(new Function<Result, List<MovieResponse>>() {
+                .map(new Function<Response, List<MovieResponse>>() {
                     @Override
-                    public List<MovieResponse> apply(@NonNull Result result) throws Exception {
+                    public List<MovieResponse> apply(@NonNull Response result) throws Exception {
                         return result.results;
                     }
                 })
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Consumer<List<MovieModel>>() {
                     @Override
                     public void accept(@NonNull List<MovieModel> movieList) throws Exception {
+                        Log.e("Prueba", movieList.toString());
                         swapAdapter(movieList);
                     }
                 });
@@ -88,5 +91,31 @@ public class MainActivity extends AppCompatActivity {
                 .fallbackToDestructiveMigration()
                 .build();
         return db.getMovieDao();
+    }
+
+    @Override
+    public void onItemClick(MovieModel item, int position) {
+        Api a = new ApiService().getApi();
+        a.getMovie(item.id.toString())
+                .subscribeOn(Schedulers.io())
+                .map(new Function<Response, List<MovieResponse>>() {
+                    @Override
+                    public List<MovieResponse> apply(@NonNull Response result) throws Exception {
+                        return result.results;
+                    }
+                })
+                .map(new Function<List<MovieResponse>, MovieModel>() {
+                    @Override
+                    public MovieModel apply(@NonNull List<MovieResponse> movies) throws Exception {
+                        return (MovieMapper.apiToModel(movies.get(0)));
+                    }
+                })
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Consumer<MovieModel>() {
+                    @Override
+                    public void accept(@NonNull MovieModel movie) throws Exception {
+                        Log.e("Prueba", movie.toString());
+                    }
+                });
     }
 }

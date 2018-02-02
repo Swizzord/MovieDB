@@ -5,12 +5,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.pablosantos.moviedb.R;
 import com.pablosantos.moviedb.data.local.MovieModel;
-import com.pkmmte.view.CircularImageView;
 
 import java.util.List;
 
@@ -25,7 +26,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
 
     class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView title, overview;
-        private CircularImageView poster;
+        private ImageView poster;
 
         private MyViewHolder(View view) {
             super(view);
@@ -57,10 +58,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MyViewHold
 //        holder.poster.setImageDrawable(???);
 
         // Image.
-//        String url = "https://image.tmdb.org/t/p/w92" + movie.posterPath;
-//        Glide.with(context)
-//                .load(url)
-//                .into(holder.poster);
+        String url = "https://image.tmdb.org/t/p/w500" + movie.posterPath;
+        Glide.with(context)
+                .load(url)
+                .apply(RequestOptions.circleCropTransform())
+                .into(holder.poster);
     }
 
     @Override

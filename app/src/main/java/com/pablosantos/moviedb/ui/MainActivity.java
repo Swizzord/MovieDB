@@ -31,7 +31,6 @@ public class MainActivity extends AppCompatActivity {
 
     private MovieDao movieDao;
     private RecyclerView recyclerView;
-    private List<MovieModel> movieList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

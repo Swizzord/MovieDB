@@ -5,18 +5,15 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <com.pkmmte.view.CircularImageView
+    <ImageView
         android:id="@+id/ivPoster"
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_marginStart="14dp"
-        android:layout_marginTop="12dp"
-        app:border="true"
-        app:border_color="#EEEEEE"
-        app:border_width="2dp"
-        app:shadow="true" />
+        android:layout_marginEnd="14dp"
+        android:layout_marginTop="12dp" />
 
     <TextView
         android:id="@+id/tvTitle"

@@ -1,18 +1,17 @@
 package com.pablosantos.moviedb.ui;
 
-import android.arch.persistence.room.Room;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.pablosantos.moviedb.R;
 import com.pablosantos.moviedb.data.local.MovieDao;
-import com.pablosantos.moviedb.data.local.MovieDataBase;
 import com.pablosantos.moviedb.data.MovieMapper;
+import com.pablosantos.moviedb.data.local.MovieDataBaseConnection;
 import com.pablosantos.moviedb.data.local.MovieModel;
 import com.pablosantos.moviedb.data.remote.Api;
 import com.pablosantos.moviedb.data.remote.ApiService;
@@ -29,7 +28,7 @@ import io.reactivex.functions.Consumer;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity implements OnItemClickListener{
+public class MainActivity extends AppCompatActivity implements OnItemClickListener {
 
     private MovieDao movieDao;
     private RecyclerView recyclerView;
@@ -39,8 +38,8 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Set up UI.
         setUpUI();
+        setUpDB();
 
         Api a = new ApiService().getApi();
         a.getPopularMovies()
@@ -58,7 +57,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                         for (MovieResponse movieResponse : movies)
                             movieList.add(MovieMapper.apiToModel(movieResponse));
 
-                        movieDao = setUpDB();
                         movieDao.insert(movieList);
                         return movieDao.getMovies();
                     }
@@ -73,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                 });
     }
 
-    void swapAdapter(List<MovieModel> movieList){
+    void swapAdapter(List<MovieModel> movieList) {
         MoviesAdapter adapter = new MoviesAdapter(movieList, this);
         recyclerView.swapAdapter(adapter, false);
     }
@@ -85,12 +83,8 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         recyclerView.setItemAnimator(new DefaultItemAnimator());
     }
 
-    private MovieDao setUpDB() {
-        MovieDataBase db = Room.databaseBuilder(getApplicationContext(),
-                MovieDataBase.class, "movieDB")
-                .fallbackToDestructiveMigration()
-                .build();
-        return db.getMovieDao();
+    private void setUpDB() {
+      movieDao = MovieDataBaseConnection.getInstance(getApplicationContext()).getDb().getMovieDao();
     }
 
     @Override
@@ -98,19 +92,45 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         Api a = new ApiService().getApi();
         a.getMovie(item.id.toString())
                 .subscribeOn(Schedulers.io())
-                .map(new Function<MovieResponse, MovieModel>() {
-                    @Override
-                    public MovieModel apply(@NonNull MovieResponse response) throws Exception {
-                        return MovieMapper.apiToModel(response);
-                    }
-                })
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Consumer<MovieModel>() {
+                .subscribe(new Consumer<MovieResponse>() {
                     @Override
-                    public void accept(@NonNull MovieModel movie) throws Exception {
-                        Log.e("Prueba", movie.toString());
+                    public void accept(@NonNull MovieResponse movie) throws Exception {
+                        seeMovieDetails(movie);
                     }
                 });
 
+    }
+
+    public void seeMovieDetails(MovieResponse movie) {
+        Intent intent = new Intent(this, MovieActivity.class);
+
+        // Room/Rxjava doesn't get along very well with the Serializable interface,
+        // so I'll put the needed info one by one...
+
+        // Merge the genres.
+        String genres = "";
+        for (int i = 0; i < movie.genres.size(); i++) {
+            genres += movie.genres.get(i).genreName;
+            if (i + 1 < movie.genres.size()) genres += ", ";
+        }
+
+        // Merge the companies.
+        String companies = "";
+        for (int i = 0; i < movie.productionCompanies.size(); i++) {
+            companies += movie.productionCompanies.get(i).companyName;
+            if (i + 1 < movie.productionCompanies.size()) companies += ", ";
+        }
+
+        intent.putExtra("movieId", movie.id);
+        intent.putExtra("title", movie.title);
+        intent.putExtra("overview", movie.overview);
+        intent.putExtra("genres", genres);
+        intent.putExtra("companies", companies);
+        intent.putExtra("poster", movie.posterPath);
+        intent.putExtra("releaseDate", movie.releaseDate);
+        intent.putExtra("rating", String.valueOf(movie.voteAverage));
+
+        startActivity(intent);
     }
 }

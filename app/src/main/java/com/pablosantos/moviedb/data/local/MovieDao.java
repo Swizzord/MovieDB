@@ -14,10 +14,10 @@ import java.util.List;
 
 @Dao
 public interface MovieDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(MovieModel movie);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(List<MovieModel> movies);
 
     @Delete
@@ -32,4 +32,9 @@ public interface MovieDao {
     @Query("SELECT * FROM MOVIES WHERE favourite = 'true'")
     List<MovieModel> getFavouriteMovies();
 
+    @Query("SELECT favourite FROM MOVIES WHERE id = :movieId")
+    boolean isFavourite(int movieId);
+
+    @Query("UPDATE MOVIES SET favourite = :bool WHERE id = :movieId")
+    void setFavourite(int movieId, boolean bool);
 }

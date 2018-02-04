@@ -2,6 +2,7 @@ package com.pablosantos.moviedb.data.remote;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**

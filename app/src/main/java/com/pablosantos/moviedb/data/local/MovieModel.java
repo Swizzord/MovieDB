@@ -2,15 +2,11 @@ package com.pablosantos.moviedb.data.local;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
-import android.arch.persistence.room.TypeConverter;
 import android.support.annotation.NonNull;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import com.pablosantos.moviedb.data.remote.Genre;
 import com.pablosantos.moviedb.data.remote.ProductionCompany;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**

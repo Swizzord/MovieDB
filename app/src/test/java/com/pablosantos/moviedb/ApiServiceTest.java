@@ -27,4 +27,11 @@ public class ApiServiceTest {
         assertNotEquals(null, result);
     }
 
+    @Test
+    public void getMovie(){
+        Response result = api.getPopularMovies().blockingGet();
+        System.out.println(result);
+        assertNotEquals(null, result);
+    }
+
 }

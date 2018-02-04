@@ -98,16 +98,10 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         Api a = new ApiService().getApi();
         a.getMovie(item.id.toString())
                 .subscribeOn(Schedulers.io())
-                .map(new Function<Response, List<MovieResponse>>() {
+                .map(new Function<MovieResponse, MovieModel>() {
                     @Override
-                    public List<MovieResponse> apply(@NonNull Response result) throws Exception {
-                        return result.results;
-                    }
-                })
-                .map(new Function<List<MovieResponse>, MovieModel>() {
-                    @Override
-                    public MovieModel apply(@NonNull List<MovieResponse> movies) throws Exception {
-                        return (MovieMapper.apiToModel(movies.get(0)));
+                    public MovieModel apply(@NonNull MovieResponse response) throws Exception {
+                        return MovieMapper.apiToModel(response);
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
@@ -117,5 +111,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                         Log.e("Prueba", movie.toString());
                     }
                 });
+
     }
 }

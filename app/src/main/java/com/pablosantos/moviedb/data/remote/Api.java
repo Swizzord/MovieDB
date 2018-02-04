@@ -13,5 +13,5 @@ public interface Api {
     Single<Response> getPopularMovies();
 
     @GET ("{movieId}?api_key=b66ffea8276ce576d60df52600822c88&language=en-US&page=1")
-    Single<Response> getMovie(@Path("movieId")String movieId);
+    Single<MovieResponse> getMovie(@Path("movieId")String movieId);
 }

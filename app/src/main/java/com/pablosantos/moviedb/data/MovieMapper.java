@@ -20,6 +20,10 @@ public class MovieMapper {
         output.productionCompanies = input.productionCompanies;
         output.overview = input.overview;
         output.releaseDate = input.releaseDate;
+        output.bugdet = input.bugdet;
+        output.status = input.status;
+        output.homepage = input.homepage;
+
         return output;
     }
 }

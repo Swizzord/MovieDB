@@ -1,12 +1,17 @@
 package com.pablosantos.moviedb.ui;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 import com.pablosantos.moviedb.R;
 import com.pablosantos.moviedb.data.local.MovieDao;
@@ -30,8 +35,13 @@ import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity implements OnItemClickListener {
 
+    // Data.
     private MovieDao movieDao;
+    private boolean showingFavourites = false;
+
+    // UI.
     private RecyclerView recyclerView;
+    private MenuItem miFavourite;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +51,11 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         setUpUI();
         setUpDB();
 
+        getPopularMovies();
+
+    }
+
+    private void getPopularMovies() {
         Api a = new ApiService().getApi();
         a.getPopularMovies()
                 .subscribeOn(Schedulers.io())
@@ -81,10 +96,21 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
         recyclerView.setLayoutManager(mLayoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
     }
 
     private void setUpDB() {
-      movieDao = MovieDataBaseConnection.getInstance(getApplicationContext()).getDb().getMovieDao();
+        movieDao = MovieDataBaseConnection.getInstance(getApplicationContext()).getDb().getMovieDao();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.toolbar_menu, menu);
+        miFavourite = menu.findItem(R.id.action_favorite);
+        return true;
     }
 
     @Override
@@ -100,6 +126,34 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                     }
                 });
 
+    }
+
+    @Override
+    protected void onResume() {
+        if (showingFavourites)
+            new getFavouriteMovies().execute();
+        super.onResume();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_favorite:
+                showingFavourites = !showingFavourites;
+                if (showingFavourites)
+                    miFavourite.setIcon(android.R.drawable.btn_star_big_on);
+                else miFavourite.setIcon(android.R.drawable.btn_star_big_off);
+                swapMovieList();
+            default:
+                // Only if user's action was not recognized.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    private void swapMovieList() {
+        if (showingFavourites)
+            new getFavouriteMovies().execute();
+        else getPopularMovies();
     }
 
     public void seeMovieDetails(MovieResponse movie) {
@@ -132,5 +186,17 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         intent.putExtra("rating", String.valueOf(movie.voteAverage));
 
         startActivity(intent);
+    }
+
+
+    private class getFavouriteMovies extends AsyncTask<Void, Boolean, List<MovieModel>> {
+        @Override
+        protected List<MovieModel> doInBackground(Void... args) {
+            return movieDao.getFavouriteMovies();
+        }
+
+        protected void onPostExecute(List<MovieModel> movies) {
+            swapAdapter(movies);
+        }
     }
 }

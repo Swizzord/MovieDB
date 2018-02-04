@@ -29,7 +29,7 @@ public interface MovieDao {
     @Query("SELECT * FROM MOVIES")
     List<MovieModel> getMovies();
 
-    @Query("SELECT * FROM MOVIES WHERE favourite = 'true'")
+    @Query("SELECT * FROM MOVIES WHERE favourite = 1")
     List<MovieModel> getFavouriteMovies();
 
     @Query("SELECT favourite FROM MOVIES WHERE id = :movieId")

@@ -50,14 +50,26 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
 
         setUpUI();
         setUpDB();
-
         getPopularMovies();
+    }
 
+    private void setUpUI() {
+        recyclerView = findViewById(R.id.recyclerView);
+        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        Toolbar myToolbar = findViewById(R.id.my_toolbar);
+        setSupportActionBar(myToolbar);
+    }
+
+    private void setUpDB() {
+        movieDao = MovieDataBaseConnection.getInstance(getApplicationContext()).getDb().getMovieDao();
     }
 
     private void getPopularMovies() {
-        Api a = new ApiService().getApi();
-        a.getPopularMovies()
+        Api api = new ApiService().getApi();
+        api.getPopularMovies()
                 .subscribeOn(Schedulers.io())
                 .map(new Function<Response, List<MovieResponse>>() {
                     @Override
@@ -86,23 +98,26 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
                 });
     }
 
+    private class getFavouriteMovies extends AsyncTask<Void, Boolean, List<MovieModel>> {
+        @Override
+        protected List<MovieModel> doInBackground(Void... args) {
+            return movieDao.getFavouriteMovies();
+        }
+
+        protected void onPostExecute(List<MovieModel> movies) {
+            swapAdapter(movies);
+        }
+    }
+
     void swapAdapter(List<MovieModel> movieList) {
         MoviesAdapter adapter = new MoviesAdapter(movieList, this);
         recyclerView.swapAdapter(adapter, false);
     }
 
-    private void setUpUI() {
-        recyclerView = findViewById(R.id.recyclerView);
-        RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getApplicationContext());
-        recyclerView.setLayoutManager(mLayoutManager);
-        recyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        Toolbar myToolbar = findViewById(R.id.my_toolbar);
-        setSupportActionBar(myToolbar);
-    }
-
-    private void setUpDB() {
-        movieDao = MovieDataBaseConnection.getInstance(getApplicationContext()).getDb().getMovieDao();
+    private void swapMovieList() {
+        if (showingFavourites)
+            new getFavouriteMovies().execute();
+        else getPopularMovies();
     }
 
     @Override
@@ -111,6 +126,21 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         inflater.inflate(R.menu.toolbar_menu, menu);
         miFavourite = menu.findItem(R.id.action_favorite);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_favorite:
+                showingFavourites = !showingFavourites;
+                if (showingFavourites)
+                    miFavourite.setIcon(android.R.drawable.btn_star_big_on);
+                else miFavourite.setIcon(android.R.drawable.btn_star_big_off);
+                swapMovieList();
+            default:
+                // Only if user's action was not recognized.
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override
@@ -133,27 +163,6 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         if (showingFavourites)
             new getFavouriteMovies().execute();
         super.onResume();
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_favorite:
-                showingFavourites = !showingFavourites;
-                if (showingFavourites)
-                    miFavourite.setIcon(android.R.drawable.btn_star_big_on);
-                else miFavourite.setIcon(android.R.drawable.btn_star_big_off);
-                swapMovieList();
-            default:
-                // Only if user's action was not recognized.
-                return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void swapMovieList() {
-        if (showingFavourites)
-            new getFavouriteMovies().execute();
-        else getPopularMovies();
     }
 
     public void seeMovieDetails(MovieResponse movie) {
@@ -186,17 +195,5 @@ public class MainActivity extends AppCompatActivity implements OnItemClickListen
         intent.putExtra("rating", String.valueOf(movie.voteAverage));
 
         startActivity(intent);
-    }
-
-
-    private class getFavouriteMovies extends AsyncTask<Void, Boolean, List<MovieModel>> {
-        @Override
-        protected List<MovieModel> doInBackground(Void... args) {
-            return movieDao.getFavouriteMovies();
-        }
-
-        protected void onPostExecute(List<MovieModel> movies) {
-            swapAdapter(movies);
-        }
     }
 }

@@ -61,12 +61,6 @@ public class MovieActivity extends AppCompatActivity {
         });
     }
 
-    private void fabPressed() {
-        boolean fav = !(boolean) fabFavourite.getTag();
-        new setFavourite().execute(movieID, fav);
-        fabFavourite.setTag(fav);
-    }
-
     private void fillData() {
         Intent intent = getIntent();
         Glide.with(ivPoster.getContext())
@@ -81,6 +75,12 @@ public class MovieActivity extends AppCompatActivity {
         movieID = intent.getIntExtra("movieId", 0);
 
         new checkFavourite().execute(movieID);
+    }
+
+    private void fabPressed() {
+        boolean fav = !(boolean) fabFavourite.getTag();
+        new setFavourite().execute(movieID, fav);
+        fabFavourite.setTag(fav);
     }
 
     private void updateFabFavourite() {
